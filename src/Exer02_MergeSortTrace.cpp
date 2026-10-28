@@ -26,34 +26,6 @@ using namespace std;
 // Type alias for 64-bit integers
 using ll = long long;
 
-//
-// Created by Junio Moreira on 27/10/26.
-// Problem 2: Merge Sort Trace (Adapted from beecrowd #1179 and LeetCode #912 - Sort an Array)
-//
-// Strategy:
-//  Divide and Conquer (Merge Sort):
-//   1. Divide: Recursively split the array [left..right] at the midpoint:
-//      middle = left + (right - left) / 2.
-//   2. Conquer: Recursively sort both halves [left..middle] and [middle + 1..right].
-//   3. Combine (Merge & Trace): Merge the two sorted subarrays using a pre-allocated
-//      helper buffer. At each completed merge, append the trace line in the exact
-//      format: "[Merge left..right]: elem1 elem2 ...".
-//
-// Complexity: O(N log N) time | O(N) auxiliary space.
-//
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <sstream>
-
-using namespace std;
-
-#define FAST_IO ios_base::sync_with_stdio(false); cin.tie(NULL);
-
-// Type alias for 64-bit integers
-using ll = long long;
-
 class Solution {
 private:
     // TODO: Implement the private helper method 'merge':
@@ -83,6 +55,7 @@ public:
         // TODO: If nums is not empty:
         //  - Allocate helper vector: vector<ll> helper(nums.size())
         //  - Call mergeSort(nums, helper, 0, (ll)nums.size() - 1, traces)
+
         // TODO: Construct final state trace using ostringstream: "[Final]: elem1 elem2 ..."
         //  and append it to 'traces'
 

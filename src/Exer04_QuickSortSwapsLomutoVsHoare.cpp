@@ -54,62 +54,6 @@ struct ComparisonResult {
     }
 };
 
-//
-// Created by Junio Moreira on 27/10/26.
-// Problem 4: Swap Count - Lomuto vs Hoare (Adapted from beecrowd #1088 and LeetCode #912)
-//
-// Strategy:
-//  The same input vector is sorted twice, by two copies of Quick Sort that differ only in
-//  the partition scheme, and every swap is counted by swapAndCount():
-//   - Lomuto: one pointer scans the range from left to right (one direction).
-//   - Hoare: two pointers start at the ends and walk towards the center, swapping the
-//     pairs that are out of place (pivot = middle element).
-//  Effective swap rule: a swap is counted only if the two indices are different (i != j).
-//  Then the program reports the swaps of each scheme, the winner (or a tie) and the sorted
-//  vector produced by the scheme with fewer swaps.
-//
-//  Notes about the two schemes:
-//   - Lomuto: the pivot is the FIRST element, moved to the end of the range before the scan
-//     (that move is a counted swap). The scan is the one seen in class (nums[j] <= pivot).
-//     This is what reproduces the numbers of the statement (7 and 6 swaps). With the plain
-//     rightmost pivot of the class, the examples give 3 x 3 and 2 x 2 (tie).
-//   - Hoare: the partition is the one seen in class, but it returns i (and the recursion is
-//     [left..i-1] and [i..right]). Returning j and recursing on [left..j] and [j+1..right]
-//     never ends on inputs like {1, 2}, because j can be left - 1.
-//
-//  Example: 9 4 1 6 7 3  =>  Lomuto: 7 swaps, Hoare: 3 swaps  =>  Hoare wins
-//
-// Complexity: O(N log N) time on average for both (O(N^2) in the worst case for Lomuto,
-//             e.g. sorted input) | O(log N) auxiliary space (recursion) on average.
-//
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <utility>
-
-using namespace std;
-
-#define FAST_IO ios_base::sync_with_stdio(false); cin.tie(NULL);
-
-// Type alias for 64-bit integers (swap counters can exceed 32 bits in the worst case)
-using ll = long long;
-
-// Result of the comparison between the two partition schemes
-struct ComparisonResult {
-    ll lomutoSwaps;
-    ll hoareSwaps;
-    string winner;              // "Lomuto", "Hoare" or "Empate"
-    vector<int> sortedArray;    // vector sorted by the scheme with fewer swaps
-
-    bool operator==(const ComparisonResult& other) const {
-        return lomutoSwaps == other.lomutoSwaps &&
-               hoareSwaps == other.hoareSwaps &&
-               winner == other.winner &&
-               sortedArray == other.sortedArray;
-    }
-};
-
 class Solution {
 private:
     ll lomutoSwaps;
@@ -163,6 +107,7 @@ public:
         // TODO: If input is not empty:
         //  - Run quickSort(byLomuto, 0, (int)byLomuto.size() - 1)
         //  - Run quickSortHoare(byHoare, 0, (int)byHoare.size() - 1)
+
         // TODO: Compare lomutoSwaps and hoareSwaps:
         //  - If lomutoSwaps < hoareSwaps: return {lomutoSwaps, hoareSwaps, "Lomuto", byLomuto}
         //  - If hoareSwaps < lomutoSwaps: return {lomutoSwaps, hoareSwaps, "Hoare", byHoare}

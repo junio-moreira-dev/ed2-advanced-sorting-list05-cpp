@@ -35,43 +35,6 @@ struct Candidate {
     }
 };
 
-//
-// Created by Junio Moreira on 27/10/26.
-// Problem 3: Quick Sort with Records and Tie-Break (Adapted from beecrowd #2312 and #1258)
-//
-// Strategy:
-//  Lomuto Partitioning with a custom comparator:
-//   1. Candidate precedence rule:
-//      - Primary key: Score in descending order (higher score comes first).
-//      - Secondary key (tie-breaker): Name in lexicographical ascending order.
-//   2. QuickSort partitions the array around the pivot chosen at index 'right'.
-//      Elements that should precede the pivot are swapped to the left partition.
-//
-// Complexity: O(N log N) average time, O(N^2) worst case | O(log N) auxiliary space.
-//
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <utility>
-
-using namespace std;
-
-#define FAST_IO ios_base::sync_with_stdio(false); cin.tie(NULL);
-
-// Type alias for 64-bit integers
-using ll = long long;
-
-struct Candidate {
-    string name;
-    ll score;
-
-    // Operator == to allow direct comparison in test assertions
-    bool operator==(const Candidate& other) const {
-        return name == other.name && score == other.score;
-    }
-};
-
 class Solution {
 private:
     // TODO: Implement the private comparator method 'comesBefore':
