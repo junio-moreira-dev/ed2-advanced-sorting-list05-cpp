@@ -27,18 +27,15 @@ class Solution {
 public:
     // LeetCode #88: merges nums2 directly into nums1 in non-decreasing order
     void merge(vector<ll>& nums1, ll m, const vector<ll>& nums2, ll n) {
-        ll i = m - 1;         // Last valid element in nums1
-        ll j = n - 1;         // Last element in nums2
-        ll k = m + n - 1;     // Insertion index at the end of nums1
+        // TODO: Initialize pointer i = m - 1 (last valid element in nums1)
+        // TODO: Initialize pointer j = n - 1 (last element in nums2)
+        // TODO: Initialize pointer k = m + n - 1 (target insertion index at the end of nums1)
 
-        // While there are remaining elements to place from nums2
-        while (j >= 0) {
-            if (i >= 0 && nums1[i] > nums2[j]) {
-                nums1[k--] = nums1[i--];
-            } else {
-                nums1[k--] = nums2[j--];
-            }
-        }
+        // TODO: Loop while j >= 0 (while there are still elements in nums2 to place):
+        //   - If i >= 0 and nums1[i] > nums2[j]:
+        //       Assign nums1[k--] = nums1[i--]
+        //   - Otherwise:
+        //       Assign nums1[k--] = nums2[j--]
     }
 };
 

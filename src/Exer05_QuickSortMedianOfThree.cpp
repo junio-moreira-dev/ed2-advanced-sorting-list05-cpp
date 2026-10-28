@@ -38,60 +38,40 @@ struct MedianSortResult {
 
 class Solution {
 private:
-    // Sorts the triplet (left, mid, right) and positions the median at index 'right'
-    ll selectMedianOfThree(vector<ll>& nums, ll left, ll right) {
-        ll mid = left + (right - left) / 2;
+    // TODO: Implement the private helper method 'selectMedianOfThree':
+    //  - Signature: ll selectMedianOfThree(vector<ll>& nums, ll left, ll right)
+    //  - Step 1: Calculate midpoint: mid = left + (right - left) / 2.
+    //  - Step 2: Compare and swap so nums[left] <= nums[mid] <= nums[right]:
+    //      * If nums[mid] < nums[left]: swap(nums[left], nums[mid]).
+    //      * If nums[right] < nums[left]: swap(nums[left], nums[right]).
+    //      * If nums[right] < nums[mid]: swap(nums[mid], nums[right]).
+    //  - Step 3: Place the median element at index 'right' as pivot: swap(nums[mid], nums[right]).
+    //  - Step 4: Return nums[right].
 
-        if (nums[mid] < nums[left]) {
-            swap(nums[left], nums[mid]);
-        }
-        if (nums[right] < nums[left]) {
-            swap(nums[left], nums[right]);
-        }
-        if (nums[right] < nums[mid]) {
-            swap(nums[mid], nums[right]);
-        }
+    // TODO: Implement the private helper method 'partition':
+    //  - Signature: ll partition(vector<ll>& nums, ll left, ll right)
+    //  - Step 1: Set pivot = nums[right] and boundary i = left - 1.
+    //  - Step 2: Loop j from left to right - 1:
+    //      * If nums[j] <= pivot: increment i and swap(nums[i], nums[j]).
+    //  - Step 3: Move pivot to correct position: swap(nums[i + 1], nums[right]).
+    //  - Step 4: Return i + 1.
 
-        // Place the median at the right position as pivot
-        swap(nums[mid], nums[right]);
-        return nums[right];
-    }
-
-    // Lomuto partition using the pivot previously placed at 'right'
-    ll partition(vector<ll>& nums, ll left, ll right) {
-        ll pivot = nums[right];
-        ll i = left - 1;
-
-        for (ll j = left; j < right; j++) {
-            if (nums[j] <= pivot) {
-                i++;
-                swap(nums[i], nums[j]);
-            }
-        }
-        swap(nums[i + 1], nums[right]);
-        return i + 1;
-    }
-
-    // Recursive QuickSort tracking the root pivot
-    void quickSort(vector<ll>& nums, ll left, ll right, ll& initialPivot, bool isRoot) {
-        if (left < right) {
-            ll pivotValue = selectMedianOfThree(nums, left, right);
-            if (isRoot) {
-                initialPivot = pivotValue;
-            }
-
-            ll pivotIndex = partition(nums, left, right);
-            quickSort(nums, left, pivotIndex - 1, initialPivot, false);
-            quickSort(nums, pivotIndex + 1, right, initialPivot, false);
-        }
-    }
+    // TODO: Implement the private recursive method 'quickSort':
+    //  - Signature: void quickSort(vector<ll>& nums, ll left, ll right, ll& initialPivot, bool isRoot)
+    //  - If left < right:
+    //      * Select pivot: ll pivotValue = selectMedianOfThree(nums, left, right).
+    //      * If isRoot is true: assign initialPivot = pivotValue.
+    //      * Partition array: ll pivotIndex = partition(nums, left, right).
+    //      * Recurse on left subarray: quickSort(nums, left, pivotIndex - 1, initialPivot, false).
+    //      * Recurse on right subarray: quickSort(nums, pivotIndex + 1, right, initialPivot, false).
 
 public:
     MedianSortResult sortWithMedianOfThree(vector<ll> nums) {
         ll initialPivot = 0;
-        if (!nums.empty()) {
-            quickSort(nums, 0, (ll)nums.size() - 1, initialPivot, true);
-        }
+
+        // TODO: If nums is not empty:
+        //  - Invoke quickSort(nums, 0, (ll)nums.size() - 1, initialPivot, true)
+
         return {initialPivot, nums};
     }
 };

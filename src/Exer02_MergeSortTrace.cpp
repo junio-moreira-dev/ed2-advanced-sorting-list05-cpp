@@ -26,71 +26,65 @@ using namespace std;
 // Type alias for 64-bit integers
 using ll = long long;
 
+//
+// Created by Junio Moreira on 27/10/26.
+// Problem 2: Merge Sort Trace (Adapted from beecrowd #1179 and LeetCode #912 - Sort an Array)
+//
+// Strategy:
+//  Divide and Conquer (Merge Sort):
+//   1. Divide: Recursively split the array [left..right] at the midpoint:
+//      middle = left + (right - left) / 2.
+//   2. Conquer: Recursively sort both halves [left..middle] and [middle + 1..right].
+//   3. Combine (Merge & Trace): Merge the two sorted subarrays using a pre-allocated
+//      helper buffer. At each completed merge, append the trace line in the exact
+//      format: "[Merge left..right]: elem1 elem2 ...".
+//
+// Complexity: O(N log N) time | O(N) auxiliary space.
+//
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <sstream>
+
+using namespace std;
+
+#define FAST_IO ios_base::sync_with_stdio(false); cin.tie(NULL);
+
+// Type alias for 64-bit integers
+using ll = long long;
+
 class Solution {
 private:
-    // Merges two sorted subarrays [left..middle] and [middle+1..right]
-    void merge(vector<ll>& nums, vector<ll>& helper, ll left, ll middle, ll right, vector<string>& traces) {
-        // Copy range to the auxiliary buffer
-        for (ll m = left; m <= right; m++) {
-            helper[m] = nums[m];
-        }
+    // TODO: Implement the private helper method 'merge':
+    //  - Signature: void merge(vector<ll>& nums, vector<ll>& helper, ll left, ll middle, ll right, vector<string>& traces)
+    //  - Step 1: Copy range [left..right] from 'nums' to 'helper'.
+    //  - Step 2: Initialize pointers i = left, j = middle + 1, k = left.
+    //  - Step 3: While i <= middle and j <= right:
+    //      * If helper[i] <= helper[j], assign nums[k++] = helper[i++].
+    //      * Otherwise, assign nums[k++] = helper[j++].
+    //  - Step 4: Copy any remaining elements from the left subarray (while i <= middle).
+    //  - Step 5: Construct trace string using ostringstream: "[Merge left..right]: elem1 elem2 ..."
+    //      and append it to 'traces'.
 
-        ll i = left;          // Pointer for the left subarray
-        ll j = middle + 1;    // Pointer for the right subarray
-        ll k = left;          // Pointer for destination in nums
-
-        // Merge back into nums in ascending order
-        while (i <= middle && j <= right) {
-            if (helper[i] <= helper[j]) {
-                nums[k++] = helper[i++];
-            } else {
-                nums[k++] = helper[j++];
-            }
-        }
-
-        // Copy remaining elements from the left subarray (if any)
-        while (i <= middle) {
-            nums[k++] = helper[i++];
-        }
-
-        // Format trace output: "[Merge left..right]: elem1 elem2 ..."
-        ostringstream oss;
-        oss << "[Merge " << left << ".." << right << "]:";
-        for (ll m = left; m <= right; m++) {
-            oss << " " << nums[m];
-        }
-        traces.resize(traces.size() + 1);
-        traces.back() = oss.str();
-    }
-
-    // Recursive helper function for Divide and Conquer
-    void mergeSort(vector<ll>& nums, vector<ll>& helper, ll left, ll right, vector<string>& traces) {
-        if (left < right) {
-            ll middle = left + (right - left) / 2;
-
-            mergeSort(nums, helper, left, middle, traces);
-            mergeSort(nums, helper, middle + 1, right, traces);
-            merge(nums, helper, left, middle, right, traces);
-        }
-    }
+    // TODO: Implement the private recursive method 'mergeSort':
+    //  - Signature: void mergeSort(vector<ll>& nums, vector<ll>& helper, ll left, ll right, vector<string>& traces)
+    //  - Base case: if left >= right, return.
+    //  - Step 1: Calculate midpoint: middle = left + (right - left) / 2.
+    //  - Step 2: Recursively sort left half: mergeSort(nums, helper, left, middle, traces).
+    //  - Step 3: Recursively sort right half: mergeSort(nums, helper, middle + 1, right, traces).
+    //  - Step 4: Merge both halves: merge(nums, helper, left, middle, right, traces).
 
 public:
     // Sorts the vector and captures the trace step by step
     pair<vector<ll>, vector<string>> sortAndTrace(vector<ll> nums) {
         vector<string> traces;
-        if (!nums.empty()) {
-            vector<ll> helper(nums.size());
-            mergeSort(nums, helper, 0, (ll)nums.size() - 1, traces);
-        }
 
-        // Format final state: "[Final]: elem1 elem2 ..."
-        ostringstream oss;
-        oss << "[Final]:";
-        for (ll x : nums) {
-            oss << " " << x;
-        }
-        traces.resize(traces.size() + 1);
-        traces.back() = oss.str();
+        // TODO: If nums is not empty:
+        //  - Allocate helper vector: vector<ll> helper(nums.size())
+        //  - Call mergeSort(nums, helper, 0, (ll)nums.size() - 1, traces)
+        // TODO: Construct final state trace using ostringstream: "[Final]: elem1 elem2 ..."
+        //  and append it to 'traces'
 
         return {nums, traces};
     }

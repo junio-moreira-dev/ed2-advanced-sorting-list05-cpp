@@ -35,46 +35,69 @@ struct Candidate {
     }
 };
 
+//
+// Created by Junio Moreira on 27/10/26.
+// Problem 3: Quick Sort with Records and Tie-Break (Adapted from beecrowd #2312 and #1258)
+//
+// Strategy:
+//  Lomuto Partitioning with a custom comparator:
+//   1. Candidate precedence rule:
+//      - Primary key: Score in descending order (higher score comes first).
+//      - Secondary key (tie-breaker): Name in lexicographical ascending order.
+//   2. QuickSort partitions the array around the pivot chosen at index 'right'.
+//      Elements that should precede the pivot are swapped to the left partition.
+//
+// Complexity: O(N log N) average time, O(N^2) worst case | O(log N) auxiliary space.
+//
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <utility>
+
+using namespace std;
+
+#define FAST_IO ios_base::sync_with_stdio(false); cin.tie(NULL);
+
+// Type alias for 64-bit integers
+using ll = long long;
+
+struct Candidate {
+    string name;
+    ll score;
+
+    // Operator == to allow direct comparison in test assertions
+    bool operator==(const Candidate& other) const {
+        return name == other.name && score == other.score;
+    }
+};
+
 class Solution {
 private:
-    // Returns true if candidate 'a' must appear before candidate 'b'
-    bool comesBefore(const Candidate& a, const Candidate& b) {
-        if (a.score != b.score) {
-            return a.score > b.score; // Higher score comes first
-        }
-        return a.name < b.name;       // Tie: alphabetical order
-    }
+    // TODO: Implement the private comparator method 'comesBefore':
+    //  - Signature: bool comesBefore(const Candidate& a, const Candidate& b)
+    //  - Rule 1 (Primary): If scores differ, return true if a.score > b.score (higher score first).
+    //  - Rule 2 (Tie-breaker): If scores are equal, return true if a.name < b.name (alphabetical order).
 
-    // Lomuto partitioning: places elements that precede pivot on the left
-    ll partition(vector<Candidate>& arr, ll left, ll right) {
-        Candidate pivot = arr[right];
-        ll i = left; // Boundary for elements that come before pivot
+    // TODO: Implement the private helper method 'partition':
+    //  - Signature: ll partition(vector<Candidate>& arr, ll left, ll right)
+    //  - Step 1: Set pivot = arr[right] and boundary i = left.
+    //  - Step 2: Loop j from left to right - 1:
+    //      * If comesBefore(arr[j], pivot) is true, swap arr[i] and arr[j], then increment i.
+    //  - Step 3: Place pivot in final position: swap arr[i] and arr[right].
+    //  - Step 4: Return i.
 
-        for (ll j = left; j < right; j++) {
-            if (comesBefore(arr[j], pivot)) {
-                swap(arr[i], arr[j]);
-                i++;
-            }
-        }
-        swap(arr[i], arr[right]);
-        return i;
-    }
-
-    // Recursive QuickSort
-    void quickSort(vector<Candidate>& arr, ll left, ll right) {
-        if (left < right) {
-            ll pivotIndex = partition(arr, left, right);
-            quickSort(arr, left, pivotIndex - 1);
-            quickSort(arr, pivotIndex + 1, right);
-        }
-    }
+    // TODO: Implement the private recursive method 'quickSort':
+    //  - Signature: void quickSort(vector<Candidate>& arr, ll left, ll right)
+    //  - Base case: if left >= right, return.
+    //  - Step 1: Find pivotIndex = partition(arr, left, right).
+    //  - Step 2: Recursively sort left subarray [left..pivotIndex - 1].
+    //  - Step 3: Recursively sort right subarray [pivotIndex + 1..right].
 
 public:
     // Sorts the candidates and returns the sorted vector
     vector<Candidate> sortCandidates(vector<Candidate> arr) {
-        if (!arr.empty()) {
-            quickSort(arr, 0, (ll)arr.size() - 1);
-        }
+        // TODO: If arr is not empty, call quickSort(arr, 0, (ll)arr.size() - 1)
         return arr;
     }
 };

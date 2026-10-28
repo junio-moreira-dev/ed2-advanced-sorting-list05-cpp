@@ -54,93 +54,103 @@ struct ComparisonResult {
     }
 };
 
+//
+// Created by Junio Moreira on 27/10/26.
+// Problem 4: Swap Count - Lomuto vs Hoare (Adapted from beecrowd #1088 and LeetCode #912)
+//
+// Strategy:
+//  The same input vector is sorted twice, by two copies of Quick Sort that differ only in
+//  the partition scheme, and every swap is counted by swapAndCount():
+//   - Lomuto: one pointer scans the range from left to right (one direction).
+//   - Hoare: two pointers start at the ends and walk towards the center, swapping the
+//     pairs that are out of place (pivot = middle element).
+//  Effective swap rule: a swap is counted only if the two indices are different (i != j).
+//  Then the program reports the swaps of each scheme, the winner (or a tie) and the sorted
+//  vector produced by the scheme with fewer swaps.
+//
+//  Notes about the two schemes:
+//   - Lomuto: the pivot is the FIRST element, moved to the end of the range before the scan
+//     (that move is a counted swap). The scan is the one seen in class (nums[j] <= pivot).
+//     This is what reproduces the numbers of the statement (7 and 6 swaps). With the plain
+//     rightmost pivot of the class, the examples give 3 x 3 and 2 x 2 (tie).
+//   - Hoare: the partition is the one seen in class, but it returns i (and the recursion is
+//     [left..i-1] and [i..right]). Returning j and recursing on [left..j] and [j+1..right]
+//     never ends on inputs like {1, 2}, because j can be left - 1.
+//
+//  Example: 9 4 1 6 7 3  =>  Lomuto: 7 swaps, Hoare: 3 swaps  =>  Hoare wins
+//
+// Complexity: O(N log N) time on average for both (O(N^2) in the worst case for Lomuto,
+//             e.g. sorted input) | O(log N) auxiliary space (recursion) on average.
+//
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <utility>
+
+using namespace std;
+
+#define FAST_IO ios_base::sync_with_stdio(false); cin.tie(NULL);
+
+// Type alias for 64-bit integers (swap counters can exceed 32 bits in the worst case)
+using ll = long long;
+
+// Result of the comparison between the two partition schemes
+struct ComparisonResult {
+    ll lomutoSwaps;
+    ll hoareSwaps;
+    string winner;              // "Lomuto", "Hoare" or "Empate"
+    vector<int> sortedArray;    // vector sorted by the scheme with fewer swaps
+
+    bool operator==(const ComparisonResult& other) const {
+        return lomutoSwaps == other.lomutoSwaps &&
+               hoareSwaps == other.hoareSwaps &&
+               winner == other.winner &&
+               sortedArray == other.sortedArray;
+    }
+};
+
 class Solution {
 private:
     ll lomutoSwaps;
     ll hoareSwaps;
 
-    // Swaps nums[a] and nums[b] and counts it, only if the indices are different
-    void swapAndCount(vector<int>& nums, int a, int b, ll& swaps) {
-        if (a != b) {
-            swap(nums[a], nums[b]);
-            swaps++;
-        }
-    }
+    // TODO: Implement the private helper method 'swapAndCount':
+    //  - Signature: void swapAndCount(vector<int>& nums, int a, int b, ll& swaps)
+    //  - Effective swap rule: only call swap(nums[a], nums[b]) and increment 'swaps' if a != b.
 
-    // Lomuto partition (one direction scan)
-    int partition(vector<int>& nums, int left, int right) {
-        // Move the first element (the pivot) to the end of the range.
-        // Remove this line to use the rightmost pivot seen in class.
-        swapAndCount(nums, left, right, lomutoSwaps);
+    // TODO: Implement the private helper method 'partition' (Lomuto):
+    //  - Signature: int partition(vector<int>& nums, int left, int right)
+    //  - Step 1: Move first element to end as pivot: swapAndCount(nums, left, right, lomutoSwaps).
+    //  - Step 2: Set pivot = nums[right] and boundary i = left - 1.
+    //  - Step 3: Loop j from left to right - 1:
+    //      * If nums[j] <= pivot: increment i and call swapAndCount(nums, i, j, lomutoSwaps).
+    //  - Step 4: Place pivot in final position: swapAndCount(nums, i + 1, right, lomutoSwaps).
+    //  - Step 5: Return i + 1.
 
-        int pivot = nums[right]; // The pivot is now the rightmost element
-        int i = left - 1;        // Pointer for elements smaller than or equal to the pivot
+    // TODO: Implement the private recursive method 'quickSort' (Lomuto):
+    //  - Signature: void quickSort(vector<int>& nums, int left, int right)
+    //  - If left < right:
+    //      * pivotIndex = partition(nums, left, right)
+    //      * quickSort(nums, left, pivotIndex - 1)
+    //      * quickSort(nums, pivotIndex + 1, right)
 
-        // Traverse through all elements from left to right - 1
-        for (int j = left; j < right; j++) {
-            // If the current element is smaller than or equal to the pivot
-            if (nums[j] <= pivot) {
-                i++;                                // Increment index of smaller element
-                swapAndCount(nums, i, j, lomutoSwaps);
-            }
-        }
+    // TODO: Implement the private helper method 'hoarePartition':
+    //  - Signature: int hoarePartition(vector<int>& nums, int left, int right)
+    //  - Step 1: Pick middle element as pivot: pivot = nums[left + (right - left) / 2].
+    //  - Step 2: Initialize pointers: i = left, j = right.
+    //  - Step 3: Loop while i <= j:
+    //      * Advance i while i <= j and nums[i] < pivot.
+    //      * Retreat j while i <= j and nums[j] > pivot.
+    //      * If i <= j: swapAndCount(nums, i, j, hoareSwaps), increment i, and decrement j.
+    //  - Step 4: Return i (first index of the right subarray).
 
-        // Move the pivot to its correct final position in the middle
-        swapAndCount(nums, i + 1, right, lomutoSwaps);
-
-        // Return the partitioning index
-        return i + 1;
-    }
-
-    // Recursive function for QuickSort using Lomuto partition
-    void quickSort(vector<int>& nums, int left, int right) {
-        if (left < right) {
-            int pivotIndex = partition(nums, left, right);
-
-            quickSort(nums, left, pivotIndex - 1);   // Sort the left subarray
-            quickSort(nums, pivotIndex + 1, right);  // Sort the right subarray
-        }
-    }
-
-    // Hoare partition scheme using a middle pivot and convergent pointers
-    int hoarePartition(vector<int>& nums, int left, int right) {
-        // Choose the middle element as the pivot
-        int pivot = nums[left + (right - left) / 2];
-        int i = left;
-        int j = right;
-
-        while (i <= j) {
-            // Move left pointer forward while elements are smaller than the pivot
-            while (i <= j && nums[i] < pivot) {
-                i++;
-            }
-
-            // Move right pointer backward while elements are greater than the pivot
-            while (i <= j && nums[j] > pivot) {
-                j--;
-            }
-
-            // If pointers haven't crossed yet, swap and advance both inward
-            if (i <= j) {
-                swapAndCount(nums, i, j, hoareSwaps);
-                i++;
-                j--;
-            }
-        }
-
-        // The pointers crossed: i is the first index of the right subarray
-        return i;
-    }
-
-    // Recursive function for QuickSort using Hoare partition
-    void quickSortHoare(vector<int>& nums, int left, int right) {
-        if (left < right) {
-            int i = hoarePartition(nums, left, right);
-
-            quickSortHoare(nums, left, i - 1);  // Sort the left subarray
-            quickSortHoare(nums, i, right);     // Sort the right subarray
-        }
-    }
+    // TODO: Implement the private recursive method 'quickSortHoare':
+    //  - Signature: void quickSortHoare(vector<int>& nums, int left, int right)
+    //  - If left < right:
+    //      * i = hoarePartition(nums, left, right)
+    //      * quickSortHoare(nums, left, i - 1)
+    //      * quickSortHoare(nums, i, right)
 
 public:
     // Sorts two copies of the input, one per scheme, and returns the comparison
@@ -150,16 +160,15 @@ public:
         lomutoSwaps = 0;
         hoareSwaps = 0;
 
-        quickSort(byLomuto, 0, (int)byLomuto.size() - 1);
-        quickSortHoare(byHoare, 0, (int)byHoare.size() - 1);
+        // TODO: If input is not empty:
+        //  - Run quickSort(byLomuto, 0, (int)byLomuto.size() - 1)
+        //  - Run quickSortHoare(byHoare, 0, (int)byHoare.size() - 1)
+        // TODO: Compare lomutoSwaps and hoareSwaps:
+        //  - If lomutoSwaps < hoareSwaps: return {lomutoSwaps, hoareSwaps, "Lomuto", byLomuto}
+        //  - If hoareSwaps < lomutoSwaps: return {lomutoSwaps, hoareSwaps, "Hoare", byHoare}
+        //  - Otherwise: return {lomutoSwaps, hoareSwaps, "Empate", byLomuto}
 
-        if (lomutoSwaps < hoareSwaps) {
-            return {lomutoSwaps, hoareSwaps, "Lomuto", byLomuto};
-        }
-        if (hoareSwaps < lomutoSwaps) {
-            return {lomutoSwaps, hoareSwaps, "Hoare", byHoare};
-        }
-        return {lomutoSwaps, hoareSwaps, "Empate", byLomuto};  // on a tie both vectors are the same
+        return {lomutoSwaps, hoareSwaps, "Empate", byLomuto};
     }
 };
 
