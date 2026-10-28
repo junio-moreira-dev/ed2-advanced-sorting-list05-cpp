@@ -1,0 +1,22 @@
+# Diretórios de compilação do CMake / CLion
+cmake-build-*/
+.cmake/
+
+# Arquivos internos da IDE JetBrains / CLion
+.idea/
+*.iws
+*.iml
+
+# Binários e executáveis compilados
+*.exe
+*.out
+*.app
+*.o
+*.obj
+*.dylib
+*.so
+*.dll
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
